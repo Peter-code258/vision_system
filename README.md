@@ -10,6 +10,115 @@
 - **🔧 开箱即用**：从数据准备、模型训练到部署应用，提供完整工具链与一键脚本。
 - **📊 实验管理**：集成W&B、TensorBoard，训练过程透明可控，结果轻松追溯。
 
+## 📁 项目结构
+```
+vision_system/                          <-- 项目根目录
+├── README.md                           # 项目总体说明、快速启动、常见问题
+├── requirements.txt                    # Python 依赖
+├── setup_ubuntu22.sh                   # 一键在 Ubuntu22.04 上准备环境的脚本（引导）
+├── package.json                        # 前端（Vue）依赖与脚本
+├── .env.sample                         # 可选：环境变量示例（端口、摄像头索引等）
+├── configs/
+│   ├── default.yaml                    # 全局默认配置（device, confidence, input_size 等）
+│   ├── dataset.yaml                    # 训练用 dataset 配置 (Ultralytics 格式)
+│   ├── train.yaml                      # 训练超参（epochs, batch, lr 等）
+│   └── inference.yaml                  # 推理参数（onnx/trt 路径、heatmap 等）
+│
+├── models/
+│   ├── exported/
+│   │   ├── best.pt                     # 训练得到的权重（示例位置）
+│   │   ├── best.onnx                   # ONNX 导出文件（示例位置）
+│   │   └── best_fp16.engine            # TensorRT engine（示例位置）
+│   └── homography/
+│       └── homography.json             # RGB <- thermal homography（配准文件）
+│
+├── dataset/
+│   ├── yolo/                           # 目标 YOLO 格式数据（images/labels）
+│   │   ├── images/
+│   │   │   ├── train/
+│   │   │   └── val/
+│   │   └── labels/
+│   │       ├── train/
+│   │       └── val/
+│   └── importers/
+│       ├── coco2yolo.py                # COCO -> YOLO 转换脚本
+│       ├── voc2yolo.py                 # VOC -> YOLO 转换脚本
+│       ├── split_yolo.py               # 划分 train/val 脚本
+│       └── verify_labels.py            # 检查标签可视化脚本
+│
+├── tools/
+│   ├── export_onnx.py                  # 基于 ultralytics 的 ONNX 导出脚本
+│   ├── trt_build.sh                    # trtexec/TensorRT 转换脚本示例
+│   └── deploy.sh                       # 一键 deploy: export->onnx->upload->start（示例）
+│
+├── calibration/
+│   ├── collect_chessboard.py           # 采集棋盘图像工具（交互）
+│   ├── calibrate_camera.py             # OpenCV 相机标定脚本（保存 mtx/dist）
+│   └── calibrate_and_align.py          # RGB<->Thermal 配对采集与手动配准生成 homography
+│
+├── src/
+│   ├── api_clients/                    # 可选：JS/Python 客户端封装（调用后端）
+│   │   └── backend_client.py
+│   │
+│   ├── detectors/                      # 各类后端推理器（统一接口）
+│   │   ├── onnx_infer.py               # ONNX Runtime 推理器（完整预/后处理 + NMS）
+│   │   ├── trt_infer.py                # TensorRT 推理器（engine loader + infer skeleton）
+│   │   └── ultralytics_infer.py        # 直接调用 ultralytics 的推理器（训练/导出阶段备用）
+│   │
+│   ├── fusion/
+│   │   └── thermal_fusion.py           # 热像→RGB 对齐、伪彩 & 叠加、ROI 温度统计
+│   │
+│   ├── sensors/
+│   │   ├── thermal_reader.py           # 读取热像相机或热像视频（灰度归一化）
+│   │   └── ir_reader.py                # 串口 IR（PIR/DIST/TEMP）读取器（线程、安全）
+│   │
+│   ├── utils/
+│   │   ├── draw.py                     # 绘制检测框、热度条、ROI 信息
+│   │   ├── camera_calib_io.py          # 保存/加载相机内参（mtx/dist）与 homography
+│   │   ├── config_loader.py            # YAML 配置加载器（全局统一）
+│   │   └── logger.py                   # 简易日志工具（写文件/控制台）
+│   │
+│   ├── server/
+│   │   ├── main_api.py                 # FastAPI 管理后台（静态页面、模型上传、start/stop、train/eval）
+│   │   ├── ws_stream.py                # WebSocket 帧+检测推送实现（JSON + base64 image）
+│   │   └── mjpeg_stream.py             # MJPEG 生成器（/video_feed）
+│   │
+│   ├── training/
+│   │   ├── train.py                    # 训练脚本（Ultralytics API 封装，支持 resume/wandb）
+│   │   └── evaluate.py                 # 评估脚本（model.val() 结果封装 JSON）
+│   │
+│   ├── gui/
+│   │   ├── pyqt_main.py                # PyQt5 控制面板主入口（嵌入视频、开关、参数面板）
+│   │   └── qt_video_widget.py          # QLabel/QImage 显示抽象（高帧率显示帮助）
+│   │
+│   └── inference/
+│       └── runner.py                   # 抽象的推理运行器：读取摄像头->推理->融合->结果回调（供 GUI/Server 调用）
+│
+├── web/                                # 前端 (Vue 3 + Vite)
+│   ├── package.json
+│   ├── index.html
+│   ├── vite.config.js
+│   └── src/
+│       ├── main.js
+│       ├── App.vue
+│       ├── styles.css
+│       └── components/
+│           ├── TopBar.vue
+│           ├── ModelManager.vue
+│           ├── InferenceControls.vue
+│           ├── HeatmapSettings.vue
+│           ├── StreamCanvas.vue
+│           └── LogsPanel.vue
+│
+├── docker/                             # 可选：Dockerfile / docker-compose 示例
+│   ├── Dockerfile.backend
+│   └── docker-compose.yml
+│
+└── logs/
+    ├── server.log
+    └── runs/                           # 训练 / 导出产生的多份 runs 目录
+```
+
 ## 🚀 快速启动
 
 ### 1. 环境配置（Ubuntu 22.04）
@@ -160,25 +269,6 @@ python fusion/thermal_fusion.py \
     --mode additive
 ```
 探索可见光与热红外的融合魔法，系统支持多种融合模式，满足不同场景需求。
-
-## 📁 项目结构
-
-```
-vision_system/
-├── backend/                 # FastAPI后端
-├── frontend/vue-app/       # Vue前端
-├── ui/                     # PyQt5桌面应用
-├── training/               # 模型训练模块
-├── inference/              # 推理模块
-├── export/                 # 模型导出(ONNX/TensorRT)
-├── fusion/                 # 多模态融合模块
-├── calibration/            # 相机标定工具
-├── datasets/               # 数据集处理
-├── configs/                # 配置文件
-├── models/weights/         # 模型权重存放处
-├── deploy/                 # 部署脚本
-└── utils/                  # 通用工具函数
-```
 
 ## 🤝 贡献与使用
 
