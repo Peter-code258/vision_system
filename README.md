@@ -271,9 +271,8 @@ python fusion/thermal_fusion.py \
     --mode additive
 ```
 探索可见光与热红外的融合魔法，系统支持多种融合模式，满足不同场景需求。
----
 
-# ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) 如何启动Docker
+# ![Docker](https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/docker.png) Docker部署
 
 在 `vision_system/docker/` 目录：
 
