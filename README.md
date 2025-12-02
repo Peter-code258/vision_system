@@ -1,14 +1,28 @@
-# 👁️ Vision-System：多模态视觉融合系统
 
-> **当可见光遇见热红外，当本地推理拥抱Web控制——这是一个集成了前沿技术与优雅设计的视觉系统，让你的视觉项目“看得更清、跑得更快、管得更顺”。**
+# 🚀 Vision System — 多模态可见光 + 热红外视觉平台
 
-## ✨ 系统亮点
+> **✨ 一个炫酷且功能完备的端到端视觉项目模版！从数据到部署，从本地界面到远程管理，让你轻松玩转多模态视觉AI。**
 
-- **🧠 多模态融合**：无缝结合可见光与热红外图像，获取超越单一模态的感知能力。
-- **⚡ 极致加速**：支持从PyTorch到ONNX再到TensorRT的完整加速流水线，推理速度飞跃。
-- **🖥️ 双端交互**：既提供直观的PyQt5桌面应用，也拥有现代化的FastAPI + Vue Web控制台。
-- **🔧 开箱即用**：从数据准备、模型训练到部署应用，提供完整工具链与一键脚本。
-- **📊 实验管理**：集成W&B、TensorBoard，训练过程透明可控，结果轻松追溯。
+---
+
+## 🗺️ 目录（快速导航）
+
+* [⚡ 快速开始](#快速开始)
+* [🛠️ 环境准备](#环境准备)
+* [📊 数据准备：COCO → YOLO](#数据准备)
+* [🏋️ 模型训练](#模型训练)
+* [📈 模型评估](#模型评估)
+* [⚙️ 模型导出：ONNX / TensorRT](#模型导出)
+* [🚀 一键部署](#一键部署)
+* [🌐 启动Web服务](#启动web服务)
+* [🖥️ 本地图形界面](#本地图形界面)
+* [🎯 实时推理](#实时推理)
+* [🎨 摄像头标定与热红外融合](#摄像头标定与热红外融合)
+* [🐳 Docker部署](#docker部署)
+*  [❓ 常见问题](#常见问题)
+* [📖 命令速查](#命令速查)
+
+---
 
 ## 📁 项目结构
 
@@ -18,7 +32,7 @@ vision_system/                          <-- 项目根目录
 ├── requirements.txt                    # Python 依赖
 ├── setup_ubuntu22.sh                   # 一键在 Ubuntu22.04 上准备环境的脚本（引导）
 ├── package.json                        # 前端（Vue）依赖与脚本
-├── .env.sample                         # 环境变量示例（端口、摄像头索引等）
+├── .env.sample                         # 可选：环境变量示例（端口、摄像头索引等）
 ├── configs/
 │   ├── default.yaml                    # 全局默认配置（device, confidence, input_size 等）
 │   ├── dataset.yaml                    # 训练用 dataset 配置 (Ultralytics 格式)
@@ -58,7 +72,7 @@ vision_system/                          <-- 项目根目录
 │   └── calibrate_and_align.py          # RGB<->Thermal 配对采集与手动配准生成 homography
 │
 ├── src/
-│   ├── api_clients/                    # JS/Python 客户端封装（调用后端）
+│   ├── api_clients/                    # 可选：JS/Python 客户端封装（调用后端）
 │   │   └── backend_client.py
 │   │
 │   ├── detectors/                      # 各类后端推理器（统一接口）
@@ -111,7 +125,7 @@ vision_system/                          <-- 项目根目录
 │           ├── StreamCanvas.vue
 │           └── LogsPanel.vue
 │
-├── docker/                             # Dockerfile / docker-compose 示例
+├── docker/                             # 可选：Dockerfile / docker-compose 示例
 │   ├── Dockerfile.backend
 │   └── docker-compose.yml
 │
@@ -121,211 +135,259 @@ vision_system/                          <-- 项目根目录
 
 ```
 
-## 🚀 快速启动
+## ⚡ 快速开始
 
-### 1. 环境配置（Ubuntu 22.04）
+1.  **克隆项目**：把仓库“搬”到你的电脑上。
+    ```bash
+    git clone <你的仓库地址>
+    cd vision_system
+    ```
 
+2.  **准备环境**：建议创建一个独立的Python虚拟环境。
+    ```bash
+    python3.10 -m venv venv
+    source venv/bin/activate
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+    ```
+
+> **小贴士**：如果你想使用GPU进行加速推理，请继续阅读下面的“环境准备”部分，安装对应版本的PyTorch和ONNXRuntime。
+
+---
+
+## 🛠️ 环境准备
+
+### 安装系统依赖
 ```bash
-# 1. 克隆项目仓库
-git clone https://github.com/yourname/vision_system.git
-cd vision_system
-
-# 2. 创建并激活Python虚拟环境
 sudo apt update
-sudo apt install python3.10 python3.10-venv python3-pip -y
-python3.10 -m venv venv
-source venv/bin/activate
+sudo apt install -y build-essential python3-dev python3-venv git wget curl libgl1-mesa-glx libglib2.0-0
+```
 
-# 3. 安装依赖包
-pip install --upgrade pip
+### 安装Python依赖
+确保已在虚拟环境中，然后执行：
+```bash
 pip install -r requirements.txt
-
-# 4. 安装PyTorch（请根据你的CUDA版本选择）
-# 以CUDA 11.8为例：
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
-### 2. 数据准备：COCO数据集转换
+### 安装GPU支持（可选但推荐）
+- **安装ONNXRuntime-GPU**（以CUDA 12.8为例）：
+    ```bash
+    pip install onnxruntime-gpu==1.18.0
+    ```
+- **安装PyTorch（GPU版）**：
+    ```bash
+    pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+    ```
 
-1. 将你的COCO数据集按以下结构放置：
-   ```
-   datasets/coco/
-   ├── train2017/      # 训练图像
-   ├── val2017/        # 验证图像
-   └── annotations/    # 标注文件
-   ```
+> **⚠️ 重要提示**：请确保你安装的`torch`、`onnxruntime`版本与你系统上的CUDA驱动版本兼容，这是许多导出或推理错误的根源！
 
-2. 一键转换为YOLO格式：
-   ```bash
-   python datasets/coco_to_yolo.py \
-       --coco_dir datasets/coco \
-       --output_dir datasets/yolo_coco \
-       --train_ratio 0.8
-   ```
-   转换完成后，`datasets/yolo_coco/dataset.yaml` 将直接用于训练！
+---
 
-## 🎯 核心功能
+## 📊 数据准备
 
-### 🏋️ 模型训练
+我们提供了将标准COCO数据集转换为YOLO格式并自动分割的脚本。
 
+**脚本位置**：`dataset/importers/coco_convert_and_split.py`
+
+**使用示例**：
 ```bash
-# 基础训练
-python training/train.py \
-    --data datasets/yolo_coco/dataset.yaml \
-    --model configs/model/yolov8.yaml \
-    --epochs 100 \
-    --batch 16 \
-    --img 640
-
-# 恢复训练（上次意外中断？没问题！）
-python training/train.py --resume runs/train/exp/last.pt
-
-# 使用W&B记录实验（需设置API密钥）
-WANDB_API_KEY=your_key_here python training/train.py --wandb
+python3 dataset/importers/coco_convert_and_split.py \
+  --coco /path/to/instances_train2017.json \
+  --images /path/to/train2017 \
+  --out dataset/yolo \
+  --split 0.8,0.1,0.1 \
+  --seed 42
 ```
 
-**训练成果**：每个实验都会在 `runs/train/` 下生成完整记录，包括最佳模型、最后检查点、训练指标和TensorBoard日志。
+转换后，你会得到结构清晰的YOLO格式数据集，并且配置文件`vision_system/configs/dataset.yaml`会自动生成，可以直接用于训练！
 
-### 🔮 推理演示
+---
 
-无论你是想测试单张图片、连接本地摄像头还是接入网络视频流，我们都准备好了：
+## 🏋️ 模型训练
 
+**训练脚本**：`src/training/train.py`
+这个增强版脚本支持自动保存最佳模型、断点续训和W&B日志。
+
+- **基础训练命令**：
+    ```bash
+    python3 src/training/train.py \
+      --data configs/dataset.yaml \
+      --pretrained yolov8m.pt \
+      --epochs 80 \
+      --imgsz 640 \
+      --batch 16 \
+      --save_export
+    ```
+- **恢复训练**：
+    ```bash
+    python3 src/training/train.py --data configs/dataset.yaml --resume --save_export
+    ```
+- **使用W&B记录实验**（需先设置API Key）：
+    ```bash
+    export WANDB_API_KEY=your_key
+    python3 src/training/train.py --data configs/dataset.yaml --wandb_project “my-project” --save_export
+    ```
+
+所有训练成果（模型、日志等）都会保存在`runs/train/<exp>/`目录下。
+
+---
+
+## 📈 模型评估
+
+使用内置脚本或一行Python命令快速评估模型性能。
+
+**快速评估**：
 ```bash
-# 单张图像推理
-python inference/vision_inference.py \
-    --weights runs/train/exp/best.pt \
-    --source samples/test.jpg
-
-# 本地摄像头实时推理
-python inference/vision_inference.py --weights runs/train/exp/best.pt --source 0
-
-# RTSP视频流推理
-python inference/vision_inference.py \
-    --weights runs/train/exp/best.pt \
-    --source rtsp://your_stream_url
+python3 - <<‘PY’
+from ultralytics import YOLO
+m = YOLO(“models/exported/best.pt”)
+res = m.val()
+print(res)
+PY
 ```
 
-### ⚡ 模型加速与导出
+---
 
-追求极致速度？我们的加速流水线能帮你把模型性能榨干：
+## ⚙️ 模型导出
 
+将训练好的PyTorch模型导出为高性能的ONNX或TensorRT格式。
+
+- **导出ONNX模型**：
+    ```bash
+    python3 tools/export_onnx.py \
+      --weights models/exported/best.pt \
+      --output models/exported/best.onnx \
+      --imgsz 640 \
+      --half \
+      --dynamic
+    ```
+- **构建TensorRT引擎**（需系统已安装TensorRT）：
+    ```bash
+    bash tools/trt_build.sh models/exported/best.onnx models/exported/best_fp16.engine fp16
+    ```
+
+---
+
+## 🚀 一键部署
+
+我们提供了一个超方便的部署脚本`tools/deploy.sh`，它能自动完成模型导出、上传到后端、切换推理引擎并启动服务的全过程！
+
+**使用方法**：
 ```bash
-# 1. 导出为ONNX格式
-python export/export_onnx.py \
-    --weights runs/train/exp/best.pt \
-    --output exports/best.onnx
-
-# 2. 转换为TensorRT引擎（FP16精度提速）
-python export/export_trt.py \
-    --onnx exports/best.onnx \
-    --output exports/best_fp16.trt \
-    --fp16
+chmod +x tools/deploy.sh
+./tools/deploy.sh
 ```
 
-**一键部署神器**：`bash deploy/deploy.sh runs/train/exp/best.pt`  
-这个脚本会自动完成模型导出、转换、上传和重启服务的全过程！
+---
 
-## 🎨 交互界面
+## 🌐 启动Web服务
 
-### 桌面应用 (PyQt5)
-
-启动炫酷的本地图形界面：
+### 后端（FastAPI）
+启动高性能的API后端服务：
 ```bash
-python ui/pyqt_app.py
+uvicorn src.server.main_api:app --host 0.0.0.0 --port 8000 --reload
 ```
-**功能一览**：实时摄像头显示、热红外融合可视化、推理参数调节、模型热切换、标定工具快捷入口。
+启动后，可以访问 `http://localhost:8000/docs` 查看完整的API交互文档。
 
-### Web控制台 (FastAPI + Vue)
-
-**后端启动**：
+### 前端（Vue 3 + Vite）
+启动现代化的管理前端：
 ```bash
-uvicorn backend.fastapi_app:app --host 0.0.0.0 --port 8000
-```
-
-**前端启动**：
-```bash
-cd frontend/vue-app
+cd web
 npm install
 npm run dev
 ```
-访问 `http://localhost:5173` 即可享受现代化的远程控制体验！
+打开浏览器访问 `http://localhost:5173` 即可。
 
-## 🔧 高级工具
+---
 
-### 摄像头标定
+## 🖥️ 本地图形界面
+
+我们还准备了功能丰富的本地PyQt5图形界面！
+
+**启动方式**：
 ```bash
-# 采集标定图像
-python calibration/calibrate_camera.py --capture
-
-# 计算标定参数
-python calibration/calibrate_camera.py --calibrate \
-    --images calibration/captured/
+source venv/bin/activate
+python3 src/gui/pyqt_main.py
 ```
-获得精确的相机内参和畸变参数，让每个像素都物尽其用。
+在这里，你可以进行本地摄像头实时预览、启停推理、切换后端、查看热图等操作。
 
-### 热红外融合
-```bash
-python fusion/thermal_fusion.py \
-    --rgb samples/rgb.jpg \
-    --thermal samples/thermal.png \
-    --mode additive
+---
+
+## 🎯 实时推理
+
+系统支持多种灵活的推理方式：
+- **通过后端API启动**：上传模型后，调用`/start`接口即可。
+- **单张图片测试**：我们提供了示例脚本(`tools/infer_single_image.py`)。
+- **实时视频流**：可以通过WebSocket订阅`ws://localhost:8000/ws`，实时获取每一帧的检测结果。
+
+---
+
+## 🎨 摄像头标定与热红外融合
+
+要实现精准的多模态融合，首先要进行摄像头标定和对齐。
+
+1.  **采集标定板图像**：运行 `calibration/collect_chessboard.py`，按提示操作。
+2.  **计算相机参数**：使用 `calibration/calibrate_camera.py` 进行标定。
+3.  **计算对齐矩阵**：运行 `calibration/calibrate_and_align.py` 获取RGB与热红外图像的对齐关系。
+
+完成以上步骤后，就可以在代码中轻松调用融合函数了：
+```python
+from src.fusion.thermal_fusion import fuse_rgb_and_thermal
+fused_img, warped_thermal = fuse_rgb_and_thermal(rgb_bgr, thermal_img, H=H, alpha=0.45)
 ```
-探索可见光与热红外的融合魔法，系统支持多种融合模式，满足不同场景需求。
 
-#![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) Docker部署
+---
 
-在 `vision_system/docker/` 目录：
+## 🐳 Docker部署
 
+我们提供了配置好CUDA环境的Dockerfile和docker-compose文件，让你可以快速构建和启动一个包含GPU支持的标准化服务环境。
+
+**构建并启动**：
 ```bash
-cd vision_system/docker/
+cd docker
 docker-compose build
 docker-compose up -d
 ```
 
-访问后端：
-
-```
-http://localhost:8000/docs
-```
-
-自动看到 FastAPI 管理后台 + 推理接口。
-
----
-
-# 🧪 验证 GPU 是否正常工作
-
-进入容器：
-
+**验证GPU在容器内是否可用**：
 ```bash
 docker exec -it vision_backend bash
+python3 - <<‘PY’
+import torch, onnxruntime as ort
+print(“torch.cuda:”, torch.cuda.is_available())
+print(“onnxruntime device:”, ort.get_device())
+PY
 ```
-
-运行：
-
-```python
-python - << 'EOF'
-import torch
-print("CUDA:", torch.cuda.is_available(), "Device:", torch.cuda.get_device_name(0))
-import onnxruntime as ort
-print(ort.get_device())
-EOF
-```
-
-期望输出：
-
-```
-CUDA: True Device: NVIDIA ...
-GPU
-```
-
-## 🤝 贡献与使用
-
-1. **自定义模型**：将你的 `.pt` 权重文件放入 `models/weights/`，即可在训练或推理中直接调用。
-2. **扩展功能**：项目采用模块化设计，欢迎贡献新的融合算法、推理优化或界面改进。
-3. **问题反馈**：遇到任何问题或有改进建议？欢迎提交Issue或Pull Request！
 
 ---
 
-**星光不问赶路人，视觉不负有心人** —— 愿这个系统能加速你的视觉智能探索之旅！🚀
+## ❓ 常见问题
 
-> 项目持续更新中，记得 `git pull` 获取最新功能！
+| 问题现象 | 可能原因与排查建议 |
+| :--- | :--- |
+| **ONNX导出失败** | 尝试不加`--half`参数，或降低`opset`版本；检查`ultralytics`和`torch`版本是否匹配。 |
+| **ONNX Runtime无法使用GPU** | 确认安装的是`onnxruntime-gpu`；检查CUDA、驱动和cuDNN版本是否匹配。 |
+| **TensorRT转换(trtexec)报错** | 检查TensorRT安装和驱动；尝试调整动态shape或workspace大小。 |
+| **摄像头打不开** | 检查设备索引号、用户权限（Docker需要映射`/dev/video*`设备），或是否被其他程序占用。 |
+| **显存不足(OOM)** | 尝试减小输入图像尺寸(`--imgsz`)、批次大小(`--batch`)，或使用更小的模型(如`yolov8n`)。 |
+
+---
+
+## 📖 命令速查
+
+| 功能 | 命令 |
+| :--- | :--- |
+| **激活虚拟环境** | `source venv/bin/activate` |
+| **转换COCO数据集** | `python3 dataset/importers/coco_convert_and_split.py …` |
+| **训练模型** | `python3 src/training/train.py --data configs/dataset.yaml …` |
+| **评估模型** | `python3 -c “from ultralytics import YOLO; print(YOLO(‘models/exported/best.pt’).val())”` |
+| **导出ONNX** | `python3 tools/export_onnx.py --weights models/exported/best.pt …` |
+| **一键部署** | `chmod +x tools/deploy.sh && ./tools/deploy.sh` |
+| **启动后端** | `uvicorn src.server.main_api:app --reload --host 0.0.0.0 --port 8000` |
+| **启动前端** | `cd web; npm install; npm run dev` |
+| **启动PyQt5界面** | `python3 src/gui/pyqt_main.py` |
+| **启动Docker服务** | `cd docker; docker-compose up -d --build` |
+
+---
+
+**🌟 欢迎贡献！** 如果你有好的想法或发现了问题，欢迎提交Issue或Pull Request。让我们共同打造更强大的视觉系统！
