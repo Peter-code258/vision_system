@@ -202,9 +202,9 @@ python3 dataset/importers/coco_convert_and_split.py \
 ```bash
 # Convert COCO dataset to YOLO format
 python3 dataset/importers/coco2yolo.py \
-  --coco coco/annotations.json \
-  --images coco/images \
-  --out dataset/yolo \
+  --coco /datasets/coco/annotations/instances_train2017.json \
+  --images /datasets/coco/train2017 \
+  --out dataset/yolo_coco \
   --split 0.8 0.1 0.1 \
   --seed 42
 
