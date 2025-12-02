@@ -198,6 +198,22 @@ python3 dataset/importers/coco_convert_and_split.py \
   --split 0.8,0.1,0.1 \
   --seed 42
 ```
+或者
+```bash
+# Convert COCO dataset to YOLO format
+python3 dataset/importers/coco2yolo.py \
+  --coco coco/annotations.json \
+  --images coco/images \
+  --out dataset/yolo \
+  --split 0.8 0.1 0.1 \
+  --seed 42
+
+# After conversion:
+# dataset/yolo/images/* and labels/* are created
+# dataset/yolo/dataset.yaml is generated and ready for training
+
+python3 src/training/train.py --data dataset/yolo/dataset.yaml 
+```
 
 转换后，你会得到结构清晰的YOLO格式数据集，并且配置文件`vision_system/configs/dataset.yaml`会自动生成，可以直接用于训练！
 
