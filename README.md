@@ -11,13 +11,14 @@
 - **📊 实验管理**：集成W&B、TensorBoard，训练过程透明可控，结果轻松追溯。
 
 ## 📁 项目结构
+
 ```
 vision_system/                          <-- 项目根目录
 ├── README.md                           # 项目总体说明、快速启动、常见问题
 ├── requirements.txt                    # Python 依赖
 ├── setup_ubuntu22.sh                   # 一键在 Ubuntu22.04 上准备环境的脚本（引导）
 ├── package.json                        # 前端（Vue）依赖与脚本
-├── .env.sample                         # 环境变量示例（端口、摄像头索引等）
+├── .env.sample                         # 可选：环境变量示例（端口、摄像头索引等）
 ├── configs/
 │   ├── default.yaml                    # 全局默认配置（device, confidence, input_size 等）
 │   ├── dataset.yaml                    # 训练用 dataset 配置 (Ultralytics 格式)
@@ -110,13 +111,14 @@ vision_system/                          <-- 项目根目录
 │           ├── StreamCanvas.vue
 │           └── LogsPanel.vue
 │
-├── docker/                             # Dockerfile / docker-compose 示例
+├── docker/                             # 可选：Dockerfile / docker-compose 示例
 │   ├── Dockerfile.backend
 │   └── docker-compose.yml
 │
 └── logs/
     ├── server.log
     └── runs/                           # 训练 / 导出产生的多份 runs 目录
+
 ```
 
 ## 🚀 快速启动
@@ -125,7 +127,7 @@ vision_system/                          <-- 项目根目录
 
 ```bash
 # 1. 克隆项目仓库
-git clone https://github.com/Peter-code258/vision_system.git
+git clone https://github.com/yourname/vision_system.git
 cd vision_system
 
 # 2. 创建并激活Python虚拟环境
@@ -269,6 +271,53 @@ python fusion/thermal_fusion.py \
     --mode additive
 ```
 探索可见光与热红外的融合魔法，系统支持多种融合模式，满足不同场景需求。
+---
+
+# ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) 如何启动Docker
+
+在 `vision_system/docker/` 目录：
+
+```bash
+cd vision_system/docker/
+docker-compose build
+docker-compose up -d
+```
+
+访问后端：
+
+```
+http://localhost:8000/docs
+```
+
+自动看到 FastAPI 管理后台 + 推理接口。
+
+---
+
+# 🧪 验证 GPU 是否正常工作
+
+进入容器：
+
+```bash
+docker exec -it vision_backend bash
+```
+
+运行：
+
+```python
+python - << 'EOF'
+import torch
+print("CUDA:", torch.cuda.is_available(), "Device:", torch.cuda.get_device_name(0))
+import onnxruntime as ort
+print(ort.get_device())
+EOF
+```
+
+期望输出：
+
+```
+CUDA: True Device: NVIDIA ...
+GPU
+```
 
 ## 🤝 贡献与使用
 

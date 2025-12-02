@@ -1,0 +1,52 @@
+# ============================================================
+# vision_system docker: Backend inference server (FastAPI)
+# Base: NVIDIA CUDA 12.8 Runtime + Ubuntu 22.04
+# ============================================================
+
+FROM nvidia/cuda:12.8.0-runtime-ubuntu22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# ------------------------------------------------------------
+# System packages
+# ------------------------------------------------------------
+RUN apt-get update && apt-get install -y \
+        python3 python3-pip python3-venv python3-dev \
+        git curl wget nano \
+        libglib2.0-0 libgl1-mesa-glx libgl1 \
+        && rm -rf /var/lib/apt/lists/*
+
+# Ensure python3 -> python
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
+# ------------------------------------------------------------
+# Python deps
+# ------------------------------------------------------------
+RUN pip3 install --upgrade pip setuptools wheel
+
+# PyTorch (CUDA 12.x compatible wheel)
+# PyTorch 官方说明：CUDA12 支持 12.1+，可用于运行环境 12.8
+RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+
+# ONNXRuntime GPU
+RUN pip install onnxruntime-gpu==1.18.0
+
+# FastAPI + backend deps
+RUN pip install fastapi uvicorn[standard] pyyaml numpy opencv-python pillow websockets python-multipart aiofiles requests
+
+# Ultralytics (training/export)
+RUN pip install ultralytics
+
+# Optional: TensorRT python bindings (如果已安装 TensorRT runtime)
+# 通常要将 NVIDIA TensorRT deb 包挂载，不过这里示例留空
+# COPY tensorrt_python_wheels/*.whl /tmp/tensorrt/
+# RUN pip install /tmp/tensorrt/*.whl
+
+# ------------------------------------------------------------
+# Container runtime config
+# ------------------------------------------------------------
+WORKDIR /app
+EXPOSE 8000
+
+# 默认运行 FastAPI 服务（代码由 docker-compose 挂载）
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]

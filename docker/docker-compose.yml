@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  backend:
+    container_name: vision_backend
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    restart: always
+    ports:
+      - "8000:8000"
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ../vision_system:/app
+      - ../vision_system/models:/app/models
+      - ../vision_system/logs:/app/logs
+      - ../vision_system/configs:/app/configs
+    working_dir: /app
