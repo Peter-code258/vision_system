@@ -1,0 +1,2 @@
+# Placeholder for TensorRT engine.
+# Use tools/trt_build.sh to generate FP16 engine on Jetson or NVIDIA GPU.

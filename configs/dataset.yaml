@@ -1,0 +1,16 @@
+dataset:
+  root: ./datasets/
+  train_dir: images/train
+  val_dir: images/val
+  labels: labels/
+
+  img_formats: ["jpg", "jpeg", "png"]
+  thermal_suffix: "_t"
+  rgb_suffix: "_r"
+
+  # RGB → 0~1; Thermal → min-max
+  normalization:
+    rgb_mean: [0.485, 0.456, 0.406]
+    rgb_std:  [0.229, 0.224, 0.225]
+    thermal_min: 0
+    thermal_max: 255

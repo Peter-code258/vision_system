@@ -1,0 +1,6 @@
+# vision_system/models/config.yaml
+batch_size: 32
+epochs: 20
+learning_rate: 0.001
+image_size: 224
+num_classes: 2

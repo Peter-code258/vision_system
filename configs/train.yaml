@@ -1,0 +1,29 @@
+trainer:
+  epochs: 100
+  batch_size: 8
+  lr: 0.0005
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  amp: true          # 自动混合精度
+  accumulate: 2      # 累积梯度 (显存不够时非常好用)
+
+model:
+  name: yolov8n
+  pretrained: true
+  img_size: 640
+  thermal_channel: 1
+  rgb_channel: 3
+  fusion: concat     # 或 selectable: concat, add, cross-attention
+
+augmentation:
+  hsv: 0.015
+  flipud: 0.5
+  fliplr: 0.5
+  mosaic: 1.0
+  mixup: 0.15
+
+paths:
+  dataset_config: ./vision_system/configs/dataset.yaml
+  default_config: ./vision_system/configs/default.yaml
+  save_dir: ./vision_system/models/exported/

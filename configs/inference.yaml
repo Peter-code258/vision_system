@@ -1,0 +1,23 @@
+weights:
+  pt: ./vision_system/models/exported/best.pt
+  onnx: ./vision_system/models/exported/best.onnx
+  trt: ./vision_system/models/exported/best_fp16.engine
+
+input:
+  img_size: 640
+  conf_threshold: 0.25
+  iou_threshold: 0.45
+
+runtime:
+  use_rgb: true
+  use_thermal: true
+  use_fusion: true
+  device: cuda
+
+homography:
+  apply: true
+  file: ./vision_system/models/homography/homography.json
+
+output:
+  save_vis: true
+  vis_dir: ./vision_system/output/

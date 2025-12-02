@@ -1,0 +1,5 @@
+# This is a placeholder file.
+# Replace this file with your real trained weight.
+# Example usage:
+#   python src/training/train.py --config configs/train.yaml
+# will generate a new model in: vision_system/models/exported/

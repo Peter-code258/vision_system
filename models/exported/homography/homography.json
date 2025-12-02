@@ -1,0 +1,18 @@
+{
+    "description": "Homography matrix mapping THERMAL → RGB coordinate system.",
+    "H": [
+        [1.002314, -0.003122, 12.443120],
+        [0.002912, 1.004551, -5.233291],
+        [0.000012, -0.000021, 1.000000]
+    ],
+    "thermal_resolution": {
+        "width": 320,
+        "height": 240
+    },
+    "rgb_resolution": {
+        "width": 1280,
+        "height": 720
+    },
+    "timestamp": "2025-01-01T12:00:00",
+    "calibrated_by": "vision_system.calibration.calibrate_and_align"
+}

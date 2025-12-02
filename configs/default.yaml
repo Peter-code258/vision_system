@@ -1,0 +1,27 @@
+project_name: vision_system
+save_dir: ./vision_system/models/exported
+
+logging:
+  level: INFO
+  save_logs: true
+  log_dir: ./vision_system/logs/
+
+device:
+  # 如果是 Jetson / NVIDIA GPU 自动触发 TensorRT
+  prefer_gpu: true
+  prefer_tensorrt: true
+
+thermal:
+  width: 320
+  height: 240
+  fps: 30
+  model: "flir"
+
+rgb:
+  width: 1280
+  height: 720
+  fps: 30
+  model: "logitech_c920"
+
+homography:
+  file: ./vision_system/models/homography/homography.json

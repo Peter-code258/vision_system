@@ -1,0 +1,83 @@
+# vision_system/requirements.txt
+# Core Python dependencies for the vision_system project.
+# NOTE: For best results, create a virtualenv (python3 -m venv venv; source venv/bin/activate)
+# and install GPU-specific packages (torch, onnxruntime-gpu, TensorRT) following the vendor instructions.
+
+# ------------------------
+# Mandatory / common libs
+# ------------------------
+numpy>=1.23
+opencv-python>=4.6
+pillow>=9.0
+pyyaml>=6.0
+tqdm>=4.64
+matplotlib>=3.5
+scikit-image>=0.20
+pandas>=1.5
+
+# FastAPI web backend & helpers
+fastapi>=0.95
+uvicorn[standard]>=0.22
+python-multipart>=0.0.6
+aiofiles>=23.0
+
+# Websockets (for streaming)
+websockets>=11.0
+
+# Model tooling
+ultralytics>=8.0.0           # training / export convenience (will pull many deps)
+onnx>=1.14.0
+onnxruntime>=1.15.0
+
+# NOTE: if you have an NVIDIA GPU and want ONNXRuntime GPU:
+# replace onnxruntime with onnxruntime-gpu (install the version matching your CUDA).
+# e.g.: pip install onnxruntime-gpu==<matching-version>
+
+# Optional / acceleration / hardware (install only if available)
+pycuda>=2021.1              # needed when using TensorRT Python helper & pycuda
+pyserial>=3.5               # for IR / serial sensor readers
+# TensorRT Python bindings (NOT installable via pip on many systems).
+# Install TensorRT from NVIDIA (deb/tar) matching your CUDA and platform.
+# The Python package name is 'tensorrt' but it typically comes with the NVIDIA packages.
+# tensorrt>=8.6.0            # optional - install via NVIDIA instructions
+
+# Desktop GUI
+PyQt5>=5.15
+
+# Frontend helpers (used by some scripts / dev)
+requests>=2.28
+python-dotenv>=1.0.0
+
+# Dev / optional telemetry
+wandb>=0.15.0               # optional, only if you use Weights & Biases for experiments
+
+# Lint / formatting (optional)
+# flake8>=6.0
+# black>=24.1
+
+# ------------------------
+# Installation notes:
+# ------------------------
+# 1) Install system libs first (Ubuntu 22.04 example):
+#    sudo apt update
+#    sudo apt install -y build-essential python3-dev python3-venv git curl libgl1-mesa-glx libglib2.0-0
+#
+# 2) Create & activate virtualenv:
+#    python3 -m venv venv
+#    source venv/bin/activate
+#    python -m pip install --upgrade pip
+#
+# 3) Install CPU-only requirements:
+#    pip install -r requirements.txt
+#
+# 4) GPU-specific installations:
+#    - Install PyTorch / torchvision following https://pytorch.org (pick wheel matching your CUDA)
+#    - Optionally install onnxruntime-gpu:
+#         pip install onnxruntime-gpu==<matching-version>
+#    - Install NVIDIA drivers, CUDA, cuDNN and TensorRT per NVIDIA docs to use TensorRT.
+#
+# 5) If using TensorRT and pycuda, ensure the appropriate CUDA toolkit & driver versions are present.
+#
+# If you want, I can produce a one-shot shell script that installs a safe set of these packages
+# for Ubuntu 22.04 (CPU-only) or outline exact commands for a specific CUDA version.
+
