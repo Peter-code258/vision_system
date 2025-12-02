@@ -16,7 +16,7 @@
 
 ```bash
 # 1. 克隆项目仓库
-git clone https://github.com/yourname/vision_system.git
+git clone https://github.com/Peter-code258/vision_system.git
 cd vision_system
 
 # 2. 创建并激活Python虚拟环境
