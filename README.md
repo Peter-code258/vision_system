@@ -32,7 +32,7 @@ vision_system/                          <-- 项目根目录
 ├── requirements.txt                    # Python 依赖
 ├── setup_ubuntu22.sh                   # 一键在 Ubuntu22.04 上准备环境的脚本（引导）
 ├── package.json                        # 前端（Vue）依赖与脚本
-├── .env.sample                         # 可选：环境变量示例（端口、摄像头索引等）
+├── .env.sample                         # 环境变量示例（端口、摄像头索引等）
 ├── configs/
 │   ├── default.yaml                    # 全局默认配置（device, confidence, input_size 等）
 │   ├── dataset.yaml                    # 训练用 dataset 配置 (Ultralytics 格式)
@@ -72,7 +72,7 @@ vision_system/                          <-- 项目根目录
 │   └── calibrate_and_align.py          # RGB<->Thermal 配对采集与手动配准生成 homography
 │
 ├── src/
-│   ├── api_clients/                    # 可选：JS/Python 客户端封装（调用后端）
+│   ├── api_clients/                    # JS/Python 客户端封装（调用后端）
 │   │   └── backend_client.py
 │   │
 │   ├── detectors/                      # 各类后端推理器（统一接口）
@@ -125,7 +125,7 @@ vision_system/                          <-- 项目根目录
 │           ├── StreamCanvas.vue
 │           └── LogsPanel.vue
 │
-├── docker/                             # 可选：Dockerfile / docker-compose 示例
+├── docker/                             # Dockerfile / docker-compose 示例
 │   ├── Dockerfile.backend
 │   └── docker-compose.yml
 │
