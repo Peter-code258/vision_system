@@ -272,7 +272,7 @@ python fusion/thermal_fusion.py \
 ```
 探索可见光与热红外的融合魔法，系统支持多种融合模式，满足不同场景需求。
 
-# ![Docker](https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/docker.png) Docker部署
+#![Docker Whale](https://cdn.jsdelivr.net/npm/@twemoji/svg/1f40b.svg) Docker部署
 
 在 `vision_system/docker/` 目录：
 
